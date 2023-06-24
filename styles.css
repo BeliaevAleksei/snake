@@ -1,0 +1,35 @@
+#root {
+    position: relative;
+}
+#gameGrid {
+  width: 500px;
+  height: 500px;
+  border: 1px solid black;
+  margin: 0 auto;
+}
+
+#gameGrid td {
+  border: 1px solid black;
+}
+
+.snakeBody {
+  background-color: orange;
+}
+
+.snakeHead {
+  background-color: green;
+}
+
+.food {
+  background-color: red;
+}
+
+.gameOver {
+  position: absolute;
+  top: calc(50% - 30px);
+  left: calc(50% - 60px);
+  color: blueviolet;
+  font-size: 30px;
+  background: cyan;
+  padding: 5px;
+}
