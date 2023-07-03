@@ -1,6 +1,15 @@
 #root {
-    position: relative;
+  position: relative;
 }
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 700px;
+}
+
 #gameGrid {
   width: 500px;
   height: 500px;
@@ -32,4 +41,24 @@
   font-size: 30px;
   background: cyan;
   padding: 5px;
+}
+
+.menu__item_selected {
+  background-color: white;
+  color: black;
+}
+
+.menu__item {
+  border: 1px solid white;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: black;
+  color: white;
+  height: 50%;
+  width: 50%;
 }

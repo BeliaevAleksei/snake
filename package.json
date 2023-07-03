@@ -1,0 +1,27 @@
+{
+  "name": "snake",
+  "version": "1.0.0",
+  "description": "snake game",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BeliaevAleksei/snake.git"
+  },
+  "keywords": [
+    "SG"
+  ],
+  "author": "Aleksei Beliaev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BeliaevAleksei/snake/issues"
+  },
+  "homepage": "https://github.com/BeliaevAleksei/snake#readme",
+  "devDependencies": {
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4"
+  }
+}

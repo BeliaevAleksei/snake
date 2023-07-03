@@ -1,3 +1,5 @@
+"use strict";
+
 // 10 x 10
 
 // x1,y1 x2,y1...
@@ -5,6 +7,13 @@
 // 0 0 0 0 0 0 0 0 0
 // ...
 // 5row, 4,5,6 elem
+
+const DIRECTION = Object.freeze({
+  RIGHT: Symbol("RIGHT"),
+  LEFT: Symbol("LEFT"),
+  UP: Symbol("UP"),
+  DOWN: Symbol("DOWN"),
+});
 
 // from 0 to
 const gridHeight = 11;
@@ -18,19 +27,24 @@ class Grid {
   }
 
   isOutOfGrid(coordinate) {
-    return coordinate.x >= this.width || coordinate.y >= this.height || coordinate.y < 0 || coordinate.x < 0
+    return (
+      coordinate.x >= this.width ||
+      coordinate.y >= this.height ||
+      coordinate.y < 0 ||
+      coordinate.x < 0
+    );
   }
 }
 
 class Snake {
   /**
-   * @param {*} startX
-   * @param {*} startY
-   * @param {*} snakeSize
-   * @param {*} direct up, down, right, left  todo: complete
+   * @param {*} gameField game field info
+   * @param {*} direction up, down, right, left
    */
-  constructor(gameField) {
+  constructor(gameField, direction) {
     this.gameField = gameField;
+    this.direction = direction;
+    this.nextDirection = direction;
     this.state = [
       new Coordinate(4, 5),
       new Coordinate(5, 5),
@@ -43,23 +57,37 @@ class Snake {
     );
     return !!equalCoordinates.length;
   }
-  getNextCoordinate(direction) {
+  isReverseDirection(direction) {
+    if (direction === DIRECTION.DOWN) {
+      return this.direction === DIRECTION.UP;
+    }
+    if (direction === DIRECTION.UP) {
+      return this.direction === DIRECTION.DOWN;
+    }
+    if (direction === DIRECTION.LEFT) {
+      return this.direction === DIRECTION.RIGHT;
+    }
+    if (direction === DIRECTION.RIGHT) {
+      return this.direction === DIRECTION.LEFT;
+    }
+  }
+  getNextCoordinate() {
     let nextCoordinate;
     const headCoordinate = this.state[this.state.length - 1];
-    switch (direction) {
-      case "right": {
+    switch (this.nextDirection) {
+      case DIRECTION.RIGHT: {
         nextCoordinate = new Coordinate(headCoordinate.x + 1, headCoordinate.y);
         break;
       }
-      case "left": {
+      case DIRECTION.LEFT: {
         nextCoordinate = new Coordinate(headCoordinate.x - 1, headCoordinate.y);
         break;
       }
-      case "up": {
+      case DIRECTION.UP: {
         nextCoordinate = new Coordinate(headCoordinate.x, headCoordinate.y - 1);
         break;
       }
-      case "down": {
+      case DIRECTION.DOWN: {
         nextCoordinate = new Coordinate(headCoordinate.x, headCoordinate.y + 1);
         break;
       }
@@ -70,8 +98,8 @@ class Snake {
     }
     return nextCoordinate;
   }
-  move(direction) {
-    const nextCoordinate = this.getNextCoordinate(direction);
+  move() {
+    const nextCoordinate = this.getNextCoordinate(this.direction);
 
     if (this.canGoCoordinate(nextCoordinate)) {
       this.state.shift();
@@ -81,8 +109,7 @@ class Snake {
     return false;
   }
   canGoDirection(direction) {
-    const nextCoordinate = this.getNextCoordinate(direction);
-    return this.canGoCoordinate(nextCoordinate);
+    return !this.isReverseDirection(direction);
   }
   canGoCoordinate(coordinate) {
     if (!this.isSnakeCoordinate(coordinate)) {
@@ -90,8 +117,14 @@ class Snake {
     }
     return false;
   }
-  add(direction) {
-    const nextCoordinate = this.getNextCoordinate(direction);
+  setNewDirection(direction) {
+    this.nextDirection = direction;
+  }
+  updateDirection() {
+    this.direction = this.nextDirection;
+  }
+  add() {
+    const nextCoordinate = this.getNextCoordinate(this.direction);
 
     if (this.canGoCoordinate(nextCoordinate)) {
       this.state.push(nextCoordinate);
@@ -113,16 +146,15 @@ class Coordinate {
 
 class GameController {
   constructor(gridHeight, gridWidth) {
-    this.direction = "right";
     this.gridField = new Grid(gridHeight, gridWidth);
-    this.snake = new Snake(this.gridField);
+    this.snake = new Snake(this.gridField, DIRECTION.RIGHT);
     this.food = this.getFoodPosition();
-    this.isGameOver = false
+    this.isGameOver = false;
   }
 
   setDirection(direction) {
     if (this.snake.canGoDirection(direction)) {
-      this.direction = direction;
+      this.snake.setNewDirection(direction);
     }
   }
 
@@ -138,16 +170,20 @@ class GameController {
   }
 
   updateState() {
-    const nextCoordinate = this.snake.getNextCoordinate(this.direction);
-    if (this.snake.isSnakeCoordinate(nextCoordinate) || this.gridField.isOutOfGrid(nextCoordinate)) {
-      this.isGameOver = true
-      return
+    const nextCoordinate = this.snake.getNextCoordinate();
+    if (
+      this.snake.isSnakeCoordinate(nextCoordinate) ||
+      this.gridField.isOutOfGrid(nextCoordinate)
+    ) {
+      this.isGameOver = true;
+      return;
     }
+    this.snake.updateDirection();
     if (this.food.isEqual(nextCoordinate)) {
-      this.snake.add(this.direction);
+      this.snake.add();
       this.food = this.getFoodPosition();
     } else {
-      this.snake.move(this.direction);
+      this.snake.move();
     }
   }
 }
@@ -182,16 +218,16 @@ class GridRender {
     this.paintFood(gameController, table);
     this.paintSnake(gameController, table);
     if (gameController.isGameOver) {
-      this.printGameOver()
+      this.printGameOver();
     }
   }
 
   static printGameOver() {
     const rootNode = document.getElementById("root");
-    const gameOver = document.createElement('p')
-    gameOver.textContent = 'Game over'
-    gameOver.classList.add('gameOver')
-    rootNode.append(gameOver)
+    const gameOver = document.createElement("p");
+    gameOver.textContent = "Game over";
+    gameOver.classList.add("gameOver");
+    rootNode.append(gameOver);
   }
 
   static paintFood(gameController, table) {
@@ -213,36 +249,38 @@ class GridRender {
   }
 }
 
-const game = new GameController(gridHeight, gridWidth);
-GridRender.render(game);
-
-document.addEventListener("keydown", (event) => {
-  let direction;
-  switch (event.key) {
-    case "ArrowUp": {
-      direction = "up";
-      break;
-    }
-    case "ArrowDown": {
-      direction = "down";
-      break;
-    }
-    case "ArrowLeft": {
-      direction = "left";
-      break;
-    }
-    case "ArrowRight": {
-      direction = "right";
-      break;
-    }
-  }
-  game.setDirection(direction);
-});
-
-const interval = setInterval(() => {
-  game.updateState();
+export function startGame() {
+  const game = new GameController(gridHeight, gridWidth);
   GridRender.render(game);
-  if (game.isGameOver) {
-    window.clearInterval(interval)
-  }
-}, 500);
+
+  document.addEventListener("keydown", (event) => {
+    let direction;
+    switch (event.key) {
+      case "ArrowUp": {
+        direction = DIRECTION.UP;
+        break;
+      }
+      case "ArrowDown": {
+        direction = DIRECTION.DOWN;
+        break;
+      }
+      case "ArrowLeft": {
+        direction = DIRECTION.LEFT;
+        break;
+      }
+      case "ArrowRight": {
+        direction = DIRECTION.RIGHT;
+        break;
+      }
+    }
+    game.setDirection(direction);
+  });
+
+  const interval = setInterval(() => {
+    game.updateState();
+    GridRender.render(game);
+    if (game.isGameOver) {
+      window.clearInterval(interval);
+    }
+  }, 500);
+}
