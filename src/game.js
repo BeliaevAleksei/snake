@@ -1,5 +1,5 @@
 "use strict";
-
+import VDOM from "./vdom";
 // 10 x 10
 
 // x1,y1 x2,y1...
@@ -186,6 +186,89 @@ class GameController {
       this.snake.move();
     }
   }
+
+  createVApp() {
+    // this.tableCreate(gameController);
+    // this.paintGrid(gameController);
+    const rows = Array.from(
+      { length: gameController.gridField.width },
+      (i, index) => {
+        return VDOM.createVNode("td", {}, []);
+      }
+    );
+
+    const rootNode = document.getElementById("root");
+    table.setAttribute("id", gridId);
+    const table = document.createElement("table");
+
+    for (let i = 0; i < gameController.gridField.height; i++) {
+      const tr = VDOM.createVNode("tr", {}, htmlMenuRows);
+      for (let j = 0; j < gameController.gridField.width; j++) {
+        tr.insertCell();
+      }
+    }
+    rootNode.innerHTML = "";
+    rootNode.appendChild(table);
+
+    //   static paintGrid(gameController) {
+    //     const table = document.getElementById(gridId);
+    //     this.paintFood(gameController, table);
+    //     this.paintSnake(gameController, table);
+    //     if (gameController.isGameOver) {
+    //       this.printGameOver();
+    //     }
+    //   }
+
+    //   static printGameOver() {
+    //     const rootNode = document.getElementById("root");
+    //     const gameOver = document.createElement("p");
+    //     gameOver.textContent = "Game over";
+    //     gameOver.classList.add("gameOver");
+    //     rootNode.append(gameOver);
+    //   }
+
+    //   static paintFood(gameController, table) {
+    //     const foodTd =
+    //       table.rows[gameController.food.y].cells[gameController.food.x];
+    //     foodTd.classList.add("food");
+    //   }
+
+    //   static paintSnake(gameController, table) {
+    //     gameController.snake.state.forEach((item, index, array) => {
+    //       const isSnakeHead = index === array.length - 1;
+    //       const td = table.rows[item.y].cells[item.x];
+    //       if (isSnakeHead) {
+    //         td.classList.add("snakeHead");
+    //       } else {
+    //         td.classList.add("snakeBody");
+    //       }
+    //     });
+    //   }
+
+    //   const htmlMenuRows = [
+    //     VDOM.createVButton("Start", {
+    //       class: className,
+    //       onclick: () => this.startGame(),
+    //     }),
+    //     VDOM.createVButton("Options", {
+    //       class: className,
+    //       onclick: () => {
+    //         console.log("Options click");
+    //       },
+    //     }),
+    //   ];
+    //   return VDOM.createVNode(
+    //     "div",
+    //     {
+    //       class: "menu",
+    //       onkeydown: (event) => {
+    //         console.log("KEYDOWN", event);
+    //       },
+    //     },
+    //     htmlMenuRows
+    //   );
+    // }
+  }
 }
 
 function generateCoordinate(maxValue) {
@@ -200,8 +283,8 @@ class GridRender {
 
   static tableCreate(gameController) {
     const rootNode = document.getElementById("root");
-    const table = document.createElement("table");
     table.setAttribute("id", gridId);
+    const table = document.createElement("table");
 
     for (let i = 0; i < gameController.gridField.height; i++) {
       const tr = table.insertRow();

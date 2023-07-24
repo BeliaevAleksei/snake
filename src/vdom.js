@@ -22,7 +22,7 @@ export default class VDOM {
       const eventName = key.slice(2);
 
       node[eventName] = nextValue;
-      console.log(node, key, value, nextValue);
+      // console.log(node, key, value, nextValue);
       if (!nextValue) {
         node.removeEventListener(eventName, this.#listener);
       } else if (!value) {
@@ -114,8 +114,11 @@ export default class VDOM {
     return node;
   }
 
+  static createVButton(text, props = {}) {
+    return this.createVNode("button", props, [text]);
+  }
+
   static patch(nextVNode, node) {
-    console.log("PATCH");
     // Получаем текущее виртуальное дерево из DOM-ноды
     const vNode = node.v || this.#recycleNode(node);
     // Патчим DOM-ноду

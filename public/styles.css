@@ -50,6 +50,15 @@
 
 .menu__item {
   border: 1px solid white;
+  padding: 4px 16px;
+  width: 100px;
+  text-align: center;
+}
+
+.menu__item:hover {
+  cursor: pointer;
+  border: 1px solid white;
+  outline: 1px solid white;
 }
 
 .menu {
