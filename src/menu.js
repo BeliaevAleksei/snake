@@ -1,5 +1,5 @@
 import VDOM from "./vdom";
-import { APPSTATE } from "./index";
+import { APPSTATE } from "./gameState";
 
 export default class MenuState {
   constructor(app, snakeGame) {
@@ -7,7 +7,7 @@ export default class MenuState {
     this.state = {
       rows: ["Start", "Options"],
     };
-    this.startGame = () => snakeGame.setState(APPSTATE.GAME);
+    this.startGame = () => snakeGame.onStateChanged(APPSTATE.GAME);
   }
 
   onStateChanged() {
@@ -21,11 +21,11 @@ export default class MenuState {
   createVApp() {
     const htmlMenuRows = [
       VDOM.createVButton("Start", {
-        class: className,
+        class: "menu__item",
         onclick: () => this.startGame(),
       }),
       VDOM.createVButton("Options", {
-        class: className,
+        class: "menu__item",
         onclick: () => {
           console.log("Options click");
         },

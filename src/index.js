@@ -2,7 +2,7 @@
 
 import VDOM from "./vdom";
 import Menu from "./menu";
-import { startGame } from "./game";
+import Game from "./game";
 import { APPSTATE } from "./gameState";
 
 class SnakeGame {
@@ -11,22 +11,23 @@ class SnakeGame {
     this.app = document.getElementById("root");
     this.views = {
       [APPSTATE.MENU]: new Menu(this.app, this),
-      [APPSTATE.GAME]: new 
+      [APPSTATE.GAME]: new Game(11, 11, this.app, this),
     };
-    const view = this[this.state].createVApp();
+    this.onStateChanged(APPSTATE.MENU);
+  }
+
+  onStateChanged(appState) {
+    this.state = appState;
+    this.renderViewByState();
+  }
+
+  renderViewByState() {
+    const view = this.views[this.state].createVApp();
     this.app = VDOM.patch(view, this.app);
-  }
-
-  onStateChanged() {
-    this[this.state].createVApp();
-    VDOM.patch(createVApp(this.store), app);
-  }
-
-  renderViewByState(appState) {
-    delete this.state;
-    this.state = nextState;
-    this[this.state] = new Menu(this.app, this);
-    this.onStateChanged();
+    if (this.state === APPSTATE.GAME) {
+      this.views[APPSTATE.GAME].startGame(this.app)
+    }
+    console.log('main', this.app)
   }
 
   trigerGlobalEvent(event) {
